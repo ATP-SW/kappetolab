@@ -7,7 +7,7 @@ function calculatePrice(v) {
   const unit=Math.ceil(Math.round(raw/v.round*1e8)/1e8)*v.round,total=unit*v.quantity;
   return {material,machine,cost,unitCost:cost/v.quantity,unit,total,profit:total-cost,effective:total?(total-cost)/total*100:0};
 }
-if(typeof module!=='undefined') module.exports={calculatePrice};
+export { calculatePrice };
 if(typeof document!=='undefined') {
  const form=document.getElementById('calculator-form'),money=n=>'Gs. '+new Intl.NumberFormat('es-PY',{maximumFractionDigits:0}).format(n);
  let summary='';

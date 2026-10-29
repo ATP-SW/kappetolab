@@ -1,26 +1,62 @@
 # Kappeto Lab
 
-Sitio estático de Kappeto Lab con catálogo, consultas por Instagram y calculadora de precios de impresión 3D.
+Landing con Vite y JavaScript: catálogo, consultas por Instagram y calculadora de impresión 3D de tres campos.
 
-## Ejecutar localmente
+## Levantar con Docker
 
-Desde esta carpeta:
+Requiere Docker con Compose. No necesitás Node instalado en tu equipo.
 
 ```sh
-python3 -m http.server 8080
+git clone https://github.com/ATP-SW/kappetolab.git
+cd kappetolab
+docker compose up -d --build
 ```
 
 Abrir http://localhost:8080.
 
-## Archivos
+```sh
+docker compose logs -f web  # Ver logs
+docker compose down         # Detener
+```
 
-- `index.html`: página, estilos e interacción del catálogo y consultas.
-- `calculator.js`: calculadora de precio de la tanda completa.
+Para otro puerto:
 
-La calculadora pide precio del filamento por kilo, peso total en gramos y horas de impresión (por ejemplo 1.5 para una hora y media). Los parámetros internos iniciales son Gs. 3.000/h, 10% de material extra, 40% de margen sobre la venta y redondeo hacia arriba a Gs. 1.000. Se pueden ajustar en `calculator.js`.
+```sh
+PORT=3000 docker compose up -d --build
+```
 
-Los parámetros están ocultos en la interfaz, pero el código JavaScript es accesible desde el navegador. Las ilustraciones del catálogo son referencias.
+Después de actualizar el código, ejecutar nuevamente `docker compose up -d --build`.
 
-## Publicación
+El Dockerfile compila con Node 24 y sirve los archivos resultantes con Nginx. Incluye una comprobación de salud en `/health`.
 
-El sitio no requiere instalación de dependencias ni compilación. Servir la carpeta raíz con un hosting estático. Para importarlo en Vercel, usar el preset Other, sin comando de build, y la carpeta raíz como directorio de salida. El despliegue se configura por separado.
+## Desarrollo local con Vite
+
+Requiere Node.js 22.12 o superior (recomendado Node 24).
+
+```sh
+npm ci
+npm run dev
+```
+
+Abrir la URL que muestre Vite (por defecto http://localhost:5173). Los cambios se actualizan durante el desarrollo.
+
+```sh
+npm run build    # Genera dist/
+npm run preview  # Revisa el build localmente
+```
+
+## Estructura
+
+- `index.html`: contenido de la landing.
+- `src/style.css`: estilos.
+- `src/main.js`: catálogo y preparación de consultas.
+- `src/calculator.js`: cálculo del precio de la tanda completa.
+- `Dockerfile`, `compose.yaml`, `docker/nginx.conf`: ejecución con Docker.
+
+La calculadora pide precio por kilo, peso total en gramos y horas (1.5 = una hora y media). Sus valores internos son Gs. 3.000/h, 10% de material extra, 40% de margen sobre venta y redondeo hacia arriba a Gs. 1.000. Se ajustan en `src/calculator.js`; están ocultos en la interfaz, pero son accesibles en el código del navegador.
+
+Las ilustraciones del catálogo son referencias. El sitio usa fuentes de Google y abre Instagram para enviar las consultas.
+
+## Publicar sin Docker
+
+Compilar con `npm ci && npm run build` y publicar `dist/` en un hosting estático. En Vercel, seleccionar Vite con comando `npm run build` y directorio de salida `dist`.
